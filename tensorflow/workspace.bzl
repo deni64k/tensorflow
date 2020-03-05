@@ -164,22 +164,24 @@ def tf_repositories(path_prefix = "", tf_repo_name = ""):
     tf_http_archive(
         name = "mkl_dnn",
         build_file = clean_dep("//third_party/mkl_dnn:mkldnn.BUILD"),
-        sha256 = "31e78581e59d7e60d4becaba3834fc6a5bf2dccdae3e16b7f70d89ceab38423f",
-        strip_prefix = "mkl-dnn-0.21.3",
+        patch_file = clean_dep("//third_party/mkl_dnn:mkldnn_v1.patch"),
+        sha256 = "1e774138203b773b5af2eed9cc6f1973f13a7263a3b80127682246c5a6c5bc45",
+        strip_prefix = "mkl-dnn-0.21.4",
         urls = [
-            "https://storage.googleapis.com/mirror.tensorflow.org/github.com/intel/mkl-dnn/archive/v0.21.3.tar.gz",
-            "https://github.com/intel/mkl-dnn/archive/v0.21.3.tar.gz",
+            "https://storage.googleapis.com/mirror.tensorflow.org/github.com/intel/mkl-dnn/archive/v0.21.4.tar.gz",
+            "https://github.com/intel/mkl-dnn/archive/v0.21.4.tar.gz",
         ],
     )
 
     tf_http_archive(
         name = "mkl_dnn_v1",
         build_file = clean_dep("//third_party/mkl_dnn:mkldnn_v1.BUILD"),
-        sha256 = "30979a09753e8e35d942446c3778c9f0eba543acf2fb0282af8b9c89355d0ddf",
-        strip_prefix = "mkl-dnn-1.2",
+        patch_file = clean_dep("//third_party/mkl_dnn:mkldnn_v1.patch"),
+        sha256 = "c69544783c453ab3fbf14c7a5b9a512561267690c9fc3e7fc3470f04756e0ab3",
+        strip_prefix = "mkl-dnn-1.2.1",
         urls = [
-            "https://storage.googleapis.com/mirror.tensorflow.org/github.com/intel/mkl-dnn/archive/v1.2.tar.gz",
-            "https://github.com/intel/mkl-dnn/archive/v1.2.tar.gz",
+            "https://storage.googleapis.com/mirror.tensorflow.org/github.com/intel/mkl-dnn/archive/v1.2.1.tar.gz",
+            "https://github.com/intel/mkl-dnn/archive/v1.2.1.tar.gz",
         ],
     )
 
@@ -644,6 +646,7 @@ def tf_repositories(path_prefix = "", tf_repo_name = ""):
         sha256 = "1188e29000013ed6517168600fc35a010d58c5d321846d6a6dfee74e4c788b45",
         strip_prefix = "boringssl-7f634429a04abc48e2eb041c81c5235816c96514",
         system_build_file = clean_dep("//third_party/systemlibs:boringssl.BUILD"),
+        patch_file = clean_dep("//third_party:boringssl-noexecstack.patch"),
         urls = [
             "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/boringssl/archive/7f634429a04abc48e2eb041c81c5235816c96514.tar.gz",
             "https://github.com/google/boringssl/archive/7f634429a04abc48e2eb041c81c5235816c96514.tar.gz",

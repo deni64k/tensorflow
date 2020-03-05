@@ -249,9 +249,9 @@ cc_library(
         "lib/doh.h",
         "lib/doh.c",
     ] + select({
-        "@org_tensorflow//tensorflow:macos": [
-            "lib/vtls/sectransp.c",
-        ],
+        # "@org_tensorflow//tensorflow:macos": [
+        #     "lib/vtls/sectransp.c",
+        # ],
         "@org_tensorflow//tensorflow:ios": [
             "lib/vtls/sectransp.c",
         ],
@@ -286,7 +286,7 @@ cc_library(
         ],
     }) + select({
         "@org_tensorflow//tensorflow:macos": [
-            "-fno-constant-cfstrings",
+            "-mno-constant-cfstrings",
         ],
         "@org_tensorflow//tensorflow:windows": [
             # See curl.h for discussion of write size and Windows
@@ -303,10 +303,10 @@ cc_library(
             "-pie",
         ],
         "@org_tensorflow//tensorflow:macos": [
-            "-Wl,-framework",
-            "-Wl,CoreFoundation",
-            "-Wl,-framework",
-            "-Wl,Security",
+        #     "-Wl,-framework",
+        #     "-Wl,CoreFoundation",
+        #     "-Wl,-framework",
+        #     "-Wl,Security",
         ],
         "@org_tensorflow//tensorflow:ios": [],
         "@org_tensorflow//tensorflow:windows": [
@@ -446,7 +446,7 @@ genrule(
         "#ifndef EXTERNAL_CURL_INCLUDE_CURL_CONFIG_H_",
         "#define EXTERNAL_CURL_INCLUDE_CURL_CONFIG_H_",
         "",
-        "#if !defined(_WIN32) && !defined(__APPLE__)",
+        "#if !defined(_WIN32) // && !defined(__APPLE__)",
         "#  include <openssl/opensslv.h>",
         "#  if defined(OPENSSL_IS_BORINGSSL)",
         "#    define HAVE_BORINGSSL 1",
@@ -479,7 +479,18 @@ genrule(
         "#  define HAVE_SYS_FILIO_H 1",
         "#  define HAVE_SYS_SOCKIO_H 1",
         "#  define OS \"x86_64-apple-darwin15.5.0\"",
-        "#  define USE_SECTRANSP 1",
+        "// #  define USE_SECTRANSP 1",
+        "#  define HAVE_BORINGSSL 1",
+        "#  define HAVE_OPENSSL_CRYPTO_H 1",
+        "#  define HAVE_OPENSSL_ERR_H 1",
+        "#  define HAVE_OPENSSL_PEM_H 1",
+        "#  define HAVE_OPENSSL_PKCS12_H 1",
+        "#  define HAVE_OPENSSL_RSA_H 1",
+        "#  define HAVE_OPENSSL_SSL_H 1",
+        "#  define HAVE_OPENSSL_X509_H 1",
+        "#  define HAVE_LIBSSL 1",
+        "#  define HAVE_SSL_GET_SHUTDOWN 1",
+        "#  define USE_OPENSSL 1",
         "#else",
         "#  define CURL_CA_BUNDLE \"/etc/ssl/certs/ca-certificates.crt\"",
         "#  define GETSERVBYPORT_R_ARGS 6",

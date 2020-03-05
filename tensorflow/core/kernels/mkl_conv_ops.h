@@ -27,6 +27,7 @@ limitations under the License.
 #include "tensorflow/core/framework/register_types.h"
 #include "tensorflow/core/framework/tensor.h"
 #include "tensorflow/core/framework/tensor_shape.h"
+#include "tensorflow/core/framework/kernel_shape_util.h"
 #include "tensorflow/core/framework/tensor_slice.h"
 #include "tensorflow/core/kernels/conv_grad_ops.h"
 #include "tensorflow/core/kernels/ops_util.h"
@@ -49,11 +50,13 @@ using mkldnn::stream;
 
 namespace tensorflow {
 
-#ifdef ENABLE_MKLDNN_V1
-#define MKLDNN_SIZE_DTYPE long int
-#else
-#define MKLDNN_SIZE_DTYPE int
-#endif  // ENABLE_MKLDNN_V1
+// #ifdef ENABLE_MKLDNN_V1
+// #define MKLDNN_SIZE_DTYPE long int
+// #else
+// #define MKLDNN_SIZE_DTYPE int
+// #endif  // ENABLE_MKLDNN_V1
+
+#define MKLDNN_SIZE_DTYPE typename memory::dims::value_type
 
 using ConvFwdDesc = mkldnn::convolution_forward::desc;
 using ConvFwdPd = mkldnn::convolution_forward::primitive_desc;
