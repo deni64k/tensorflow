@@ -1,0 +1,219 @@
+--- /dev/null	2020-03-06 08:14:29.000000000 -0500
++++ mkl_dnn/src/cpu/jit_uni_template_instances.cpp	2020-03-06 08:12:35.000000000 -0500
+@@ -0,0 +1,60 @@
++#include "rnn/rnn_utils.hpp"
++#include "jit_uni_dw_conv_kernel_utils.hpp"
++#include "rnn/jit_uni_lstm_cell_postgemm.hpp"
++#include "rnn/jit_uni_gru_cell_postgemm_2.hpp"
++#include "rnn/jit_uni_gru_cell_postgemm_1.hpp"
++#include "rnn/jit_uni_gru_lbr_cell_postgemm.hpp"
++#include "rnn/jit_uni_rnn_cell_postgemm.hpp"
++
++namespace mkldnn {
++namespace impl {
++namespace cpu {
++
++template struct jit_uni_dw_conv_fwd_kernel<avx512_core, data_type::bf16>;
++template struct jit_uni_dw_conv_fwd_kernel<avx512_common, data_type::f32>;
++template struct jit_uni_dw_conv_fwd_kernel<avx2, data_type::f32>;
++template struct jit_uni_dw_conv_fwd_kernel<sse42, data_type::f32>;
++
++template struct jit_uni_dw_conv_bwd_data_kernel<avx512_core, data_type::bf16>;
++template struct jit_uni_dw_conv_bwd_data_kernel<avx512_common, data_type::f32>;
++template struct jit_uni_dw_conv_bwd_data_kernel<avx2, data_type::f32>;
++template struct jit_uni_dw_conv_bwd_data_kernel<sse42, data_type::f32>;
++
++template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_core,
++        data_type::bf16>;
++template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_common,
++        data_type::f32>;
++template struct jit_uni_dw_conv_bwd_weights_kernel<avx2, data_type::f32>;
++template struct jit_uni_dw_conv_bwd_weights_kernel<sse42, data_type::f32>;
++
++template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::f32>;
++template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::f32>;
++template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::f32>;
++
++template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::u8>;
++template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::u8>;
++template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::u8>;
++
++template struct jit_uni_gru_cell_postgemm_part2_fwd<sse42, data_type::f32>;
++template struct jit_uni_gru_cell_postgemm_part2_fwd<avx2, data_type::f32>;
++template struct jit_uni_gru_cell_postgemm_part2_fwd<avx512_core, data_type::f32>;
++
++template struct jit_uni_gru_cell_postgemm_part1_fwd<sse42, data_type::f32>;
++template struct jit_uni_gru_cell_postgemm_part1_fwd<avx2, data_type::f32>;
++template struct jit_uni_gru_cell_postgemm_part1_fwd<avx512_core, data_type::f32>;
++
++template struct jit_uni_gru_lbr_cell_postgemm_fwd<sse42, data_type::f32>;
++template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx2, data_type::f32>;
++template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx512_core, data_type::f32>;
++
++template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::f32>;
++template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::f32>;
++template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::f32>;
++
++template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::u8>;
++template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::u8>;
++template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::u8>;
++
++}
++}
++}
+--- mkl_dnn/src/cpu/rnn/jit_uni_rnn_cell_postgemm.hpp.orig	2020-03-06 08:15:27.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/jit_uni_rnn_cell_postgemm.hpp	2020-03-06 08:11:48.000000000 -0500
+@@ -292,13 +292,13 @@
+ 
+ };
+ 
+-template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::f32>;
+-template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::f32>;
+-template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::f32>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::f32>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::f32>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::f32>;
+ 
+-template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::u8>;
+-template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::u8>;
+-template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::u8>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<sse42, data_type::u8>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<avx2, data_type::u8>;
++extern template struct jit_uni_rnn_cell_postgemm_fwd<avx512_core, data_type::u8>;
+ 
+ }
+ }
+--- mkl_dnn/src/cpu/jit_uni_dw_conv_kernel_utils.hpp.orig	2020-03-07 13:18:29.000000000 -0500
++++ mkl_dnn/src/cpu/jit_uni_dw_conv_kernel_utils.hpp	2020-03-07 13:23:27.000000000 -0500
+@@ -206,10 +206,10 @@
+         scratchpad.book(key_conv_padded_bias, sizeof(float) * jcp.oc);
+ }
+ 
+-template struct jit_uni_dw_conv_fwd_kernel<avx512_core, data_type::bf16>;
+-template struct jit_uni_dw_conv_fwd_kernel<avx512_common, data_type::f32>;
+-template struct jit_uni_dw_conv_fwd_kernel<avx2, data_type::f32>;
+-template struct jit_uni_dw_conv_fwd_kernel<sse42, data_type::f32>;
++extern template struct jit_uni_dw_conv_fwd_kernel<avx512_core, data_type::bf16>;
++extern template struct jit_uni_dw_conv_fwd_kernel<avx512_common, data_type::f32>;
++extern template struct jit_uni_dw_conv_fwd_kernel<avx2, data_type::f32>;
++extern template struct jit_uni_dw_conv_fwd_kernel<sse42, data_type::f32>;
+ 
+ template <cpu_isa_t isa, data_type_t kernel_dt>
+ struct jit_uni_dw_conv_bwd_data_kernel {
+@@ -350,10 +350,10 @@
+     UNUSED(jcp);
+ }
+ 
+-template struct jit_uni_dw_conv_bwd_data_kernel<avx512_core, data_type::bf16>;
+-template struct jit_uni_dw_conv_bwd_data_kernel<avx512_common, data_type::f32>;
+-template struct jit_uni_dw_conv_bwd_data_kernel<avx2, data_type::f32>;
+-template struct jit_uni_dw_conv_bwd_data_kernel<sse42, data_type::f32>;
++extern template struct jit_uni_dw_conv_bwd_data_kernel<avx512_core, data_type::bf16>;
++extern template struct jit_uni_dw_conv_bwd_data_kernel<avx512_common, data_type::f32>;
++extern template struct jit_uni_dw_conv_bwd_data_kernel<avx2, data_type::f32>;
++extern template struct jit_uni_dw_conv_bwd_data_kernel<sse42, data_type::f32>;
+ 
+ template <cpu_isa_t isa, data_type_t kernel_dt>
+ struct jit_uni_dw_conv_bwd_weights_kernel {
+@@ -541,12 +541,12 @@
+     jcp.nthr = jcp.nthr_g * jcp.nthr_mb;
+ }
+ 
+-template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_core,
++extern template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_core,
+         data_type::bf16>;
+-template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_common,
++extern template struct jit_uni_dw_conv_bwd_weights_kernel<avx512_common,
+         data_type::f32>;
+-template struct jit_uni_dw_conv_bwd_weights_kernel<avx2, data_type::f32>;
+-template struct jit_uni_dw_conv_bwd_weights_kernel<sse42, data_type::f32>;
++extern template struct jit_uni_dw_conv_bwd_weights_kernel<avx2, data_type::f32>;
++extern template struct jit_uni_dw_conv_bwd_weights_kernel<sse42, data_type::f32>;
+ }
+ }
+ }
+--- mkl_dnn/src/cpu/rnn/jit_uni_lstm_cell_postgemm.hpp.orig	2020-03-07 13:18:50.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/jit_uni_lstm_cell_postgemm.hpp	2020-03-07 13:24:43.000000000 -0500
+@@ -399,13 +399,13 @@
+ 
+ };
+ 
+-template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::f32>;
+-template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::f32>;
+-template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::f32>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::f32>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::f32>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::f32>;
+ 
+-template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::u8>;
+-template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::u8>;
+-template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::u8>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<sse42, data_type::u8>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<avx2, data_type::u8>;
++extern template struct jit_uni_lstm_cell_postgemm_fwd<avx512_core, data_type::u8>;
+ 
+ }
+ }
+--- mkl_dnn/src/cpu/rnn/jit_uni_gru_cell_postgemm_2.hpp.orig	2020-03-07 13:19:20.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/jit_uni_gru_cell_postgemm_2.hpp	2020-03-07 13:25:42.000000000 -0500
+@@ -188,9 +188,9 @@
+ 
+ };
+ 
+-template struct jit_uni_gru_cell_postgemm_part2_fwd<sse42, data_type::f32>;
+-template struct jit_uni_gru_cell_postgemm_part2_fwd<avx2, data_type::f32>;
+-template struct jit_uni_gru_cell_postgemm_part2_fwd<avx512_core, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part2_fwd<sse42, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part2_fwd<avx2, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part2_fwd<avx512_core, data_type::f32>;
+ 
+ }
+ }
+--- mkl_dnn/src/cpu/rnn/jit_uni_gru_cell_postgemm_1.hpp.orig	2020-03-07 13:19:34.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/jit_uni_gru_cell_postgemm_1.hpp	2020-03-07 13:26:17.000000000 -0500
+@@ -184,9 +184,9 @@
+ 
+ };
+ 
+-template struct jit_uni_gru_cell_postgemm_part1_fwd<sse42, data_type::f32>;
+-template struct jit_uni_gru_cell_postgemm_part1_fwd<avx2, data_type::f32>;
+-template struct jit_uni_gru_cell_postgemm_part1_fwd<avx512_core, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part1_fwd<sse42, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part1_fwd<avx2, data_type::f32>;
++extern template struct jit_uni_gru_cell_postgemm_part1_fwd<avx512_core, data_type::f32>;
+ 
+ }
+ }
+--- mkl_dnn/src/cpu/rnn/jit_uni_gru_lbr_cell_postgemm.hpp.orig	2020-03-07 13:19:45.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/jit_uni_gru_lbr_cell_postgemm.hpp	2020-03-07 13:27:05.000000000 -0500
+@@ -271,9 +271,9 @@
+     }
+ }; // namespace cpu
+ 
+-template struct jit_uni_gru_lbr_cell_postgemm_fwd<sse42, data_type::f32>;
+-template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx2, data_type::f32>;
+-template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx512_core, data_type::f32>;
++extern template struct jit_uni_gru_lbr_cell_postgemm_fwd<sse42, data_type::f32>;
++extern template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx2, data_type::f32>;
++extern template struct jit_uni_gru_lbr_cell_postgemm_fwd<avx512_core, data_type::f32>;
+ 
+ }
+ }
+--- mkl_dnn/src/cpu/rnn/rnn_utils.hpp.orig	2020-03-06 08:44:45.000000000 -0500
++++ mkl_dnn/src/cpu/rnn/rnn_utils.hpp	2020-03-06 08:41:29.000000000 -0500
+@@ -19,7 +19,14 @@
+ 
+ #include "mkldnn.h"
+ 
+-#include "cpu_rnn_pd.hpp"
++#include "c_types_map.hpp"
++#include "../cpu_engine.hpp"
++#include "../cpu_memory.hpp"
++#include "../cpu_primitive.hpp"
++#include "nstl.hpp"
++#include "rnn_pd.hpp"
++#include "type_helpers.hpp"
++#include "utils.hpp"
+ 
+ #define rnn_postgemm_sig(f)                                               \
+     void f(const rnn_utils::rnn_conf_t &rnn, acc_data_t *ws_gates_,   \
